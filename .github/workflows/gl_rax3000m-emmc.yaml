@@ -126,9 +126,9 @@ jobs:
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
           cd openwrt/
           python3 setup.py -c configs/config-mt798x-7.6.6.1.yml
-          cd mt7981/
-          cp ./glinet4.x/pkg_config/gl_pkg_config_mt3000.mk ./glinet4.x/mt7981/gl_pkg_config.mk
-          cp ./glinet4.x/pkg_config/glinet_depends_mt3000.yml ./profiles/glinet_depends.yml
+          cd openwrt/mt7981/
+          cp ./glinet4.x/pkg_config/gl_pkg_config_mt2500.mk  ./glinet4.x/mt7981/gl_pkg_config.mk
+          cp ./glinet4.x/pkg_config/glinet_depends_mt2500.yml  ./profiles/glinet_depends.yml
 
       - name: Run custom-script-1
         run: |

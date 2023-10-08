@@ -130,8 +130,8 @@ jobs:
           cd openwrt
           python3 setup.py -c configs/config-mt798x-7.6.6.1.yml
 
-      - name∶ Download gl-inet packages
-        run∶
+      - name: Download gl-inet packages
+        run:
           cd openwrt/mt7981
           git clone https://github.com/gl-inet/glinet4.x.git
           cp glinet4.x/pkg_config/gl_pkg_config_mt3000.mk glinet4.x/mt7981/gl_pkg_config.mk

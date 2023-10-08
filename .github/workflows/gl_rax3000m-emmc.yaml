@@ -131,9 +131,9 @@ jobs:
           python3 setup.py -c configs/config-mt798x-7.6.6.1.yml && cd mt7981
           git clone https://github.com/gl-inet/glinet4.x.git
           cd mt7981
-          cp ./glinet4.x/pkg_config/gl_pkg_config_mt3000.mk glinet4.x/mt7981/gl_pkg_config.mk
+          cp glinet4.x/pkg_config/gl_pkg_config_mt3000.mk glinet4.x/mt7981/gl_pkg_config.mk
           cd mt7981
-          ./scripts/gen_config.py target_mt7981_rax3000m-emmc.yml glinet_depends
+          scripts/gen_config.py target_mt7981_rax3000m-emmc.yml glinet_depends
 
       - name: SSH connection to Actions
         uses: P3TERX/ssh2actions@main

@@ -135,6 +135,7 @@ jobs:
       - name: Download gl-inet packages
         run: |
           cd openwrt/mt7981
+          ./scripts/feeds update -a && ./scripts/feeds install -a
           git clone https://github.com/gl-inet/glinet4.x.git
           cp glinet4.x/pkg_config/gl_pkg_config_mt2500.mk glinet4.x/mt7981/gl_pkg_config.mk
           scripts/gen_config.py target_mt7981_rax3000m-emmc.yml glinet_depends

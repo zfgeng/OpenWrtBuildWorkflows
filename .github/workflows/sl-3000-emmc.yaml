@@ -159,11 +159,19 @@ jobs:
           cd openwrt/
           $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
 
-      - name: Mod wifi TXpower
+      - name: Mod wifi Txpower and Fix wireless mac
         run: |
           cd openwrt
           cp $GITHUB_WORKSPACE/mt79xx_20231229-4012a0_eeprom.tar.xz dl/mt79xx_20231229-4012a0.tar.xz
-                
+          ## 创建一个辅助文件。文件内容是写入MAC地址到dat文件，固定wifi MAC地址
+          echo -e "\t\tlocal wifi0_mac=\"\$(mmc_get_mac_binary factory 0x04)\"
+          \t\tsed -i \"/^MacAddress=.*/ {s/.*/MacAddress=\$wifi0_mac/;b;}; \\\$aMacAddress=\$wifi0_mac\" /etc/wireless/mediatek/mt7981.dbdc.b0.dat
+          \t\tlocal wifi1_mac=\"\$(macaddr_setbit_la \$wifi0_mac)\"
+          \t\tsed -i \"/^MacAddress=.*/ {s/.*/MacAddress=\$wifi1_mac/;b;}; \\\$aMacAddress=\$wifi1_mac\" /etc/wireless/mediatek/mt7981.dbdc.b1.dat" > temp_insert.txt
+          ## 将文本内容写入02_network
+          sed -i '/mediatek_setup_macs()/,/\};/ {/sl,3000-emmc)/ {n;n;n;r temp_insert.txt
+          }}' target/linux/mediatek/mt7981/base-files/etc/board.d/02_network
+          
       - name: SSH connection to Actions
         uses: P3TERX/ssh2actions@main
         if: github.event.inputs.ssh == 'true' || contains(github.event.action, 'ssh')

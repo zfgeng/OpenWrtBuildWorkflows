@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build Example-Firmware for sl-3000-emmc
+name: Build openwrt-firmware for sl-3000-emmc
 
 on:
   workflow_dispatch:

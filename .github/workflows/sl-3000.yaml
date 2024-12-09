@@ -162,7 +162,7 @@ jobs:
       - name: Mod wifi Txpower and Fix wireless mac
         run: |
           cd openwrt
-          \cp -rf $GITHUB_WORKSPACE/mt79xx_20231229-4012a0_eeprom.tar.xz dl/mt79xx_20231229-4012a0.tar.xz
+          cp $GITHUB_WORKSPACE/mt79xx_20231229-4012a0_eeprom.tar.xz dl/mt79xx_20231229-4012a0.tar.xz
 
       - name: SSH connection to Actions
         uses: P3TERX/ssh2actions@main

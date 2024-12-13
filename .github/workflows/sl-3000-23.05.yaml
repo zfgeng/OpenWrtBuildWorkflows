@@ -13,7 +13,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build Openwrt-Firmware for SL-3000
+name: Build Openwrt-23.05-Firmware for SL-3000
 
 on:
   workflow_dispatch:

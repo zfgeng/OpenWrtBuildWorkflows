@@ -47,7 +47,7 @@ env:
                    uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev clang file nano aria2"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: tenbay-wr3000k-gsw-emmc-nor.config
+  CONFIG_FILE: tenbay-wr3000k-gsw-emmc-nor-24.10.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
@@ -178,7 +178,7 @@ jobs:
       - name: Mod wifi Txpower and Fix wireless mac
         run: |
           cd openwrt
-          cp $GITHUB_WORKSPACE/mt79xx_20231229-4012a0_eeprom.tar.xz dl/mt79xx_mtwifi_20231229-4012a0.tar.xz
+          cp $GITHUB_WORKSPACE/mt79xx_20231229-4012a0_eeprom.tar.xz dl/mt79xx_mt_wifi_20231229-4012a0.tar.xz
           mkdir -p files/etc/uci-defaults
           touch files/etc/uci-defaults/30_improve-txpower
           cp $GITHUB_WORKSPACE/30_improve-txpower files/etc/uci-defaults/30_improve-txpower

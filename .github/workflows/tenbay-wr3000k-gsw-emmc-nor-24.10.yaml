@@ -175,14 +175,14 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: Mod wifi Txpower and Fix wireless mac
-        run: |
-          cd openwrt
-          cp $GITHUB_WORKSPACE/mt79xx_20231229-4012a0_eeprom.tar.xz dl/mt79xx_mt_wifi_20231229-4012a0.tar.xz
-          mkdir -p files/etc/uci-defaults
-          touch files/etc/uci-defaults/30_improve-txpower
-          cp $GITHUB_WORKSPACE/30_improve-txpower files/etc/uci-defaults/30_improve-txpower
-          chmod +x files/etc/uci-defaults/30_improve-txpower
+#      - name: Mod wifi Txpower and Fix wireless mac
+#        run: |
+#          cd openwrt
+#          cp $GITHUB_WORKSPACE/mt79xx_20231229-4012a0_eeprom.tar.xz dl/mt79xx_mt_wifi_20231229-4012a0.tar.xz
+#          mkdir -p files/etc/uci-defaults
+#          touch files/etc/uci-defaults/30_improve-txpower
+#          cp $GITHUB_WORKSPACE/30_improve-txpower files/etc/uci-defaults/30_improve-txpower
+#          chmod +x files/etc/uci-defaults/30_improve-txpower
 
       - name: Compile the firmware
         id: compile

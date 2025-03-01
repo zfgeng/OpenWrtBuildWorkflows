@@ -4,7 +4,7 @@
 # 替换后2.4G无线功率提高至25dbm，5G无线功率提高至24dbm。
 
 # 复制H3C NX30 pro无线校准文件
-cp /lib/firmware/MT7981_iPAiLNA_EEPROM.bin /tmp/MT7981_iPAiLNA_EEPROM.bin
+cp /etc/MT7981_iPAiLNA_EEPROM.bin /tmp/MT7981_iPAiLNA_EEPROM.bin
 
 # 提取原机MAC信息、写入H3C NX30 pro无线校准文件
 dd if=/dev/mtd2 of=/tmp/MT7981_iPAiLNA_EEPROM.bin bs=1 seek=4 skip=4 count=44 conv=notrunc

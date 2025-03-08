@@ -150,7 +150,7 @@ jobs:
 
       - name: Load custom configuration
         run: |
-          [ -e files ] && mv files/ openwrt/files/
+          [ -e files-24.10 ] && mv files-24.10/ openwrt/files/
           [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
  
       - name: Run custom-script-2
@@ -162,11 +162,7 @@ jobs:
       - name: Mod wifi Txpower and Fix wireless mac
         run: |
           cd openwrt
-          mkdir -p files/etc/uci-defaults
-          touch files/etc/uci-defaults/30_improve-txpower
-          cp $GITHUB_WORKSPACE/30_improve-txpower files/etc/uci-defaults/30_improve-txpower
           chmod +x files/etc/uci-defaults/30_improve-txpower
-          cp $GITHUB_WORKSPACE/MT7981_iPAiLNA_EEPROM.bin files/etc/MT7981_iPAiLNA_EEPROM.bin
 
       - name: SSH connection to Actions
         uses: P3TERX/ssh2actions@main

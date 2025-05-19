@@ -14,7 +14,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build openwrt-Firmware for tenbay-wr3000k-gsw-emmc-nor-24.10
+name: Build openwrt-Firmware for zbtlink-z8107ax-emmc-24.10
 
 on:
   workflow_dispatch:

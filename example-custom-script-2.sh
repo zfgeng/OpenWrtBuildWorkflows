@@ -29,3 +29,5 @@ sed -i '/myddns_ipv4/,$d' feeds/packages/net/ddns-scripts/files/etc/config/ddns
 rm -rf feeds/packages/net/v2ray-geodata
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
+##-----------------Add Luci-app-gecoosac-----------------
+git clone https://github.com/lwb1978/openwrt-gecoosac package/openwrt-gecoosac

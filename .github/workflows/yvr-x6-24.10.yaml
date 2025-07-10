@@ -14,7 +14,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build OpenWrt-Firmware for yvr-x6
+name: Build OpenWrt-Firmware for yvr-x6-24.10
 
 on:
   workflow_dispatch:

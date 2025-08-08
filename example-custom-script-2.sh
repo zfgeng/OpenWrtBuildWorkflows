@@ -16,12 +16,20 @@
 #patch content
 #EOF
 #git apply example.patch
-##-----------------Add OpenClash dev core------------------
+##-----------------Add Luci-app-openclash and dev core------------------
+mkdir package/luci-app-openclash
+cd package/luci-app-openclash
+git init
+git remote add -f origin https://github.com/vernesong/OpenClash.git
+git config core.sparsecheckout true
+echo "luci-app-openclash" >> .git/info/sparse-checkout
+git pull --depth 1 origin master
+git branch --set-upstream-to=origin/master master
 curl -sL -m 30 --retry 2 https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-arm64.tar.gz -o /tmp/clash.tar.gz
 tar zxvf /tmp/clash.tar.gz -C /tmp >/dev/null 2>&1
 chmod +x /tmp/clash >/dev/null 2>&1
-mkdir -p feeds/luci/applications/luci-app-openclash/root/etc/openclash/core
-mv /tmp/clash feeds/luci/applications/luci-app-openclash/root/etc/openclash/core/clash_meta >/dev/null 2>&1
+mkdir -p package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+mv /tmp/clash package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core/clash_meta >/dev/null 2>&1
 rm -rf /tmp/clash.tar.gz >/dev/null 2>&1
 ##-----------------Delete DDNS's examples-----------------
 sed -i '/myddns_ipv4/,$d' feeds/packages/net/ddns-scripts/files/etc/config/ddns

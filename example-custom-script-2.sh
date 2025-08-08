@@ -17,6 +17,7 @@
 #EOF
 #git apply example.patch
 ##-----------------Add Luci-app-openclash and dev core------------------
+rm -rf feeds/luci/applications/luci-app-openclash
 mkdir package/luci-app-openclash
 cd package/luci-app-openclash
 git init

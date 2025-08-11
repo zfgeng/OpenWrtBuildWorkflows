@@ -36,6 +36,8 @@ rm -rf /tmp/clash.tar.gz >/dev/null 2>&1
 ##-----------------Delete DDNS's examples-----------------
 sed -i '/myddns_ipv4/,$d' feeds/packages/net/ddns-scripts/files/etc/config/ddns
 ##-----------------Add Luci-app-modns-----------------
+rm -rf feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
 rm -rf feeds/packages/net/v2ray-geodata
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata

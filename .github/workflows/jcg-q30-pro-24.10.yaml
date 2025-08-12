@@ -53,7 +53,7 @@ env:
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
   # please upload your scripts to the root directory of your workflow repo.
   CUSTOM_SCRIPT_1: example-custom-script-1.sh
-  CUSTOM_SCRIPT_2: example-custom-script-2.sh
+  CUSTOM_SCRIPT_3: example-custom-script-3.sh
   # STORE_PRODUCTS determine whether to upload all compilation products to workflow artifacts.
   # Not only firmwires, all compiled packages will be here, including compiled but not solidified into firmware.
   STORE_PRODUCTS: false
@@ -152,11 +152,11 @@ jobs:
         run: |
           [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
  
-      - name: Run custom-script-2
+      - name: Run custom-script-3
         run: |
-          chmod +x $CUSTOM_SCRIPT_2
+          chmod +x $CUSTOM_SCRIPT_3
           cd openwrt/
-          $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
+          $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_3
 
       - name: Modiy LAN address
         run: |

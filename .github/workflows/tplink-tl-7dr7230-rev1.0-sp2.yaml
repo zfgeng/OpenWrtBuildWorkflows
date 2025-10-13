@@ -147,8 +147,6 @@ jobs:
         run: |
           cd openwrt/
           git apply $GITHUB_WORKSPACE/tplink-tl-7dr7230-rev1.0-sp2.diff
-          rm -rf ./target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7230-v1.dts
-          rm -rf ./target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7230-v2.dts
           
       - name: Update feeds
         run: cd openwrt/ && ./scripts/feeds update -a

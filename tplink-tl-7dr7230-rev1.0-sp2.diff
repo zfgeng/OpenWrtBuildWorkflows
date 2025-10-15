@@ -1,0 +1,81 @@
+diff --git a/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr-common.dtsi b/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr-common.dtsi
+index 604b329d61..2871f8b21b 100644
+--- a/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr-common.dtsi
++++ b/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr-common.dtsi
+@@ -213,14 +213,14 @@
+ 
+ 			band@0 {
+ 				reg = <0>;
+-				nvmem-cells = <&macaddr_factory_1e001c 0>;
++				nvmem-cells = <&macaddr_factory_4 0>;
+ 				nvmem-cell-names = "mac-address";
+ 			};
+ 
+ 			/* FIXME: this does not work */
+ 			band@1 {
+ 				reg = <1>;
+-				nvmem-cells = <&macaddr_factory_1e001c 2>;
++				nvmem-cells = <&macaddr_factory_a 0>;
+ 				nvmem-cell-names = "mac-address";
+ 			};
+ 		};
+@@ -287,6 +287,18 @@
+ 						reg = <0x0 0x1e00>;
+ 					};
+ 
++					macaddr_factory_4: eeprom@4 {
++						compatible = "mac-base";
++						reg = <0x4 0x6>;
++						#nvmem-cell-cells = <1>;
++					};
++
++					macaddr_factory_a: eeprom@a {
++						compatible = "mac-base";
++						reg = <0xa 0x6>;
++						#nvmem-cell-cells = <1>;
++					};
++
+ 					macaddr_factory_1e001c: eeprom@1e001c {
+ 						compatible = "mac-base";
+ 						reg = <0x1e001c 0x6>;
+diff --git a/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7250-v1.dts b/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7250-v1.dts
+index 5020505e7d..2f63e45e31 100644
+--- a/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7250-v1.dts
++++ b/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7250-v1.dts
+@@ -7,7 +7,7 @@
+ #include "mt7988d-tplink-tl-7dr-common.dtsi"
+ 
+ / {
+-	model = "TP-Link TL-7DR7250 v1";
++	model = "TP-Link TL-7DR7230 Rev1.0 sp2";
+ 	compatible = "tplink,tl-7dr7250-v1", "mediatek,mt7988d";
+ };
+ 
+@@ -18,11 +18,11 @@
+ };
+ 
+ &gmac2 {
+-	phy-mode = "2500base-x";
+-	phy = <&phy13>;
+ 	nvmem-cells = <&macaddr_factory_1e001c 1>;
+ 	nvmem-cell-names = "mac-address";
+ 	openwrt,netdev-name = "wan";
++	phy-mode = "2500base-x";
++	phy = <&phy13>;
+ 	status = "okay";
+ };
+ 
+diff --git a/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac b/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac
+index 4113811fd1..7bc1423bb0 100644
+--- a/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac
++++ b/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac
+@@ -137,6 +137,9 @@ case "$board" in
+ 		[ "$PHYNBR" = "0" ] && echo "$addr" > /sys${DEVPATH}/macaddress
+ 		[ "$PHYNBR" = "1" ] && macaddr_add $addr -1 > /sys${DEVPATH}/macaddress
+ 		;;
++	tplink,tl-7dr7250-v1)
++		[ "$PHYNBR" = "1" ] && mtd_get_mac_binary factory 0xa > /sys${DEVPATH}/macaddress
++		;;
+ 	netgear,wax220)
+ 		hw_mac_addr=$(mtd_get_mac_ascii u-boot-env mac)
+ 		[ "$PHYNBR" = "0" ] && macaddr_add $hw_mac_addr 2 > /sys${DEVPATH}/macaddress

@@ -14,7 +14,7 @@
 #-------------------------------------------------------------------------------------------------------
 
 # Workflow name which is showed in GitHub Actions.
-name: Build OpenWrt-Firmware for tplink-tl-7dr7250-v1
+name: Build OpenWrt-Firmware for mtwifi_tplink-tl-7dr7230-rev1.0-sp2
 
 on:
   workflow_dispatch:
@@ -48,7 +48,7 @@ env:
   upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: tplink-tl-7dr7250-v1.config
+  CONFIG_FILE: mtwifi_tplink-tl-7dr7230-rev1.0-sp2.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
@@ -146,7 +146,7 @@ jobs:
       - name: Apply Patch
         run: |
           cd openwrt/
-          git apply $GITHUB_WORKSPACE/tplink-tl-7dr7250-v1.diff
+          git apply $GITHUB_WORKSPACE/mtwifi_tplink-tl-7dr7230-rev1.0-sp2.diff
           
       - name: Update feeds
         run: cd openwrt/ && ./scripts/feeds update -a
@@ -168,8 +168,8 @@ jobs:
       - name: Modiy LAN address
         run: |
           cd openwrt/
-          sed -i 's/192.168.6.1/192.168.10.1/g' package/base-files/files/bin/config_generate
-          sed -i 's/192.168.1.1/192.168.10.1/g' $(find feeds/luci/modules/luci-mod-system -type f -name "flash.js")
+          sed -i 's/192.168.6.1/192.168.0.1/g' package/base-files/files/bin/config_generate
+          sed -i 's/192.168.1.1/192.168.0.1/g' $(find feeds/luci/modules/luci-mod-system -type f -name "flash.js")
 
       - name: SSH connection to Actions
         uses: P3TERX/ssh2actions@main

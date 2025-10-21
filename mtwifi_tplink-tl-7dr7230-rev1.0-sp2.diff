@@ -55,7 +55,7 @@ index 5cd7b884ac..9a5f90d820 100644
  	FILES+=$(PKG_BUILD_DIR)/wlan_hwifi/mtk_pci.ko
  	AUTOLOAD:=$(call AutoLoad,63,mtk_pci)
  	SUBMENU:=Drivers
-diff --git a/target/linux/mediatek/dts/mtwifi_tplink-tl-7dr7230-rev1.0-sp2.dts b/target/linux/mediatek/dts/mtwifi_tplink-tl-7dr7230-rev1.0-sp2.dts
+diff --git a/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7230-rev1.0-sp2.dts b/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7230-rev1.0-sp2.dts
 new file mode 100644
 index 0000000000..52bb49eda8
 --- /dev/null

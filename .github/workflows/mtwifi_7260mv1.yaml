@@ -146,7 +146,7 @@ jobs:
       - name: Apply Patch
         run: |
           cd openwrt/
-          git apply $GITHUB_WORKSPACE/mtwifi_7260mv1.diff
+          git apply $GITHUB_WORKSPACE/mtwifi_7260mv1_1.diff
 
       - name: clone rtl837x_driver
         run: |

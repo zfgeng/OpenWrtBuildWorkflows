@@ -1,0 +1,499 @@
+diff --git a/package/boot/uboot-envtools/files/mediatek_filogic b/package/boot/uboot-envtools/files/mediatek_filogic
+index c08c80d1b2..8f50186307 100644
+--- a/package/boot/uboot-envtools/files/mediatek_filogic
++++ b/package/boot/uboot-envtools/files/mediatek_filogic
+@@ -52,6 +52,7 @@ tplink,tl-xdr6086|\
+ tplink,tl-xdr6088|\
+ tplink,tl-xtr8488|\
+ tplink,tl-7dr7230-rev1.0-sp2|\
++tplink,tl-7dr7260mv1|\
+ xiaomi,mi-router-ax3000t-ubootmod|\
+ xiaomi,redmi-router-ax6000-ubootmod|\
+ zyxel,ex5601-t0-ubootmod)
+diff --git a/package/boot/uboot-mediatek/Makefile b/package/boot/uboot-mediatek/Makefile
+index 3456aa48e3..1354de9b81 100644
+--- a/package/boot/uboot-mediatek/Makefile
++++ b/package/boot/uboot-mediatek/Makefile
+@@ -918,6 +918,18 @@ define U-Boot/mt7988_tplink_tl-7dr7230-rev1.0-sp2
+   DEPENDS:=+trusted-firmware-a-mt7988-spim-nand-ddr4
+ endef
+ 
++define U-Boot/mt7988_tplink_tl-7dr7260mv1
++  NAME:=TP-Link TL-7DR7260mv1
++  BUILD_SUBTARGET:=filogic
++  BUILD_DEVICES:=tplink_tl-7dr7260mv1
++  UBOOT_CONFIG:=mt7988d_tplink_tl-7dr7260mv1
++  UBOOT_IMAGE:=u-boot.fip
++  BL2_BOOTDEV:=spim-nand
++  BL2_SOC:=mt7988
++  BL2_DDRTYPE:=ddr4
++  DEPENDS:=+trusted-firmware-a-mt7988-spim-nand-ddr4
++endef
++
+ define U-Boot/mt7988_rfb-spim-nand
+   NAME:=MT7988 Reference Board
+   BUILD_SUBTARGET:=filogic
+diff --git a/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7260mv1.dts b/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7260mv1.dts
+new file mode 100644
+index 0000000000..92f3cc7d44
+--- /dev/null
++++ b/target/linux/mediatek/dts/mt7988d-tplink-tl-7dr7260mv1.dts
+@@ -0,0 +1,378 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2024 MediaTek Inc.
++ * Author: Sam.Shih <sam.shih@mediatek.com>
++ */
++
++/dts-v1/;
++#include "mt7988a.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/pinctrl/mt65xx.h>
++#include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
++
++/ {
++	model = "TP-Link TL-7DR7260mv1";
++	compatible = "tplink,tl-7dr7260mv1", "mediatek,mt7988d";
++
++	aliases {
++		led-boot = &led_status_red;
++		led-failsafe = &led_status_red;
++		led-running = &led_status_green;
++		led-upgrade = &led_status_green;
++		label-mac-device = &gmac0;
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = &uart0;
++		bootargs = "console=ttyS0,115200n1 loglevel=6  \
++			    earlycon=uart8250,mmio32,0x11000000 \
++			    pci=pcie_bus_perf ubi.block=0,firmware root=/dev/fit0 \
++				rootwait";
++		rootdisk-spim-nand = <&ubi_rootdisk>;
++	};
++
++	cpus {
++		/delete-node/ cpu@3;
++	};
++
++	memory {
++		reg = <0 0x40000000 0 0x20000000>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&button_pins>;
++
++		button-mesh {
++			label = "mesh";
++			linux,code = <BTN_9>;
++			gpios = <&pio 14 GPIO_ACTIVE_LOW>;
++		};
++
++		button-reset {
++			label = "reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&pio 13 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	gpio-leds {
++		compatible = "gpio-leds";
++
++		led_status_red: led-0 {
++			color = <LED_COLOR_ID_RED>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&pio 53 GPIO_ACTIVE_HIGH>;
++		};
++
++		led_status_green: led-1 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&pio 54 GPIO_ACTIVE_HIGH>;
++		};
++	};
++	
++	rtl837x-gsw@1 {
++		compatible = "realtek,rtl837x";
++		rtl837x,mdio = <&mdio_bus>;
++		rtl837x,reset-pin = <&pio 3 GPIO_ACTIVE_HIGH>;
++		rtl837x,cpu-port = <0x00>;
++		rtl837x,smi-addr = <0x1d>;
++		rtl837x,sds0mode = "10g-kr";
++		// ethernet = <&gmac2>;
++	};
++};
++
++&cpu0 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu1 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu2 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cci {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&eth {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mdio0_pins>;
++	status = "okay";
++};
++
++&gmac1 {
++	phy-mode = "internal";
++	phy-connection-type = "internal";
++	phy = <&int_2p5g_phy>;
++	nvmem-cells = <&macaddr_factory_1e001c 0>;
++	nvmem-cell-names = "mac-address";
++	status = "okay";
++};
++
++&gmac2 {
++	phy-mode = "10gbase-r";
++	phy-connection-type = "10gbase-r";
++	nvmem-cells = <&macaddr_factory_1e001c 1>;
++	nvmem-cell-names = "mac-address";
++	status = "okay";
++	fixed-link {
++                speed = <10000>;
++                full-duplex;
++                paus;
++				asym-pause;
++    };
++};
++
++&switch {
++	status = "disabled";
++};
++
++&i2p5gbe_led0 {
++	color = <LED_COLOR_ID_GREEN>;
++	status = "okay";
++};
++
++&int_2p5g_phy {
++	pinctrl-names = "i2p5gbe-led";
++	pinctrl-0 = <&i2p5gbe_led0_pins>;
++};
++
++&i2c0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_pins>;
++	status = "okay";
++
++	rt5190a_64: rt5190a@64 {
++		compatible = "richtek,rt5190a";
++		reg = <0x64>;
++		/*interrupts-extended = <&gpio26 0 IRQ_TYPE_LEVEL_LOW>;*/
++		vin2-supply = <&rt5190_buck1>;
++		vin3-supply = <&rt5190_buck1>;
++		vin4-supply = <&rt5190_buck1>;
++
++		regulators {
++			rt5190_buck1: buck1 {
++				regulator-name = "rt5190a-buck1";
++				regulator-min-microvolt = <5090000>;
++				regulator-max-microvolt = <5090000>;
++				regulator-allowed-modes = <RT5190A_OPMODE_AUTO RT5190A_OPMODE_FPWM>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck2 {
++				regulator-name = "vcore";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			rt5190_buck3: buck3 {
++				regulator-name = "vproc";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-boot-on;
++			};
++
++			buck4 {
++				regulator-name = "rt5190a-buck4";
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <850000>;
++				regulator-allowed-modes = <RT5190A_OPMODE_AUTO RT5190A_OPMODE_FPWM>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo {
++				regulator-name = "rt5190a-ldo";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
++};
++
++/*
++ * MT7988A have 4 pcies:
++ * -pcie0: pcie@11300000 - Gen3 2 lanes
++ * -pcie1: pcie@11310000 - Gen3 2 lanes
++ * -pcie2: pcie@11280000 - Gen3 1 lane (shared with u3 port of ssusb0)
++ * -pcie3: pcie@11290000 - Gen3 1 lane
++ * and 2 usb controllers
++ * -ssusb0: usb@11190000 (u2 port and u3 port, u3 port shared with pcie2)
++ * -ssusb1: usb@11200000 (u2 port and u3 port)
++ *
++ * MT7988D only support 2 pcies:
++ * -pcie0: pcie@11300000 - Gen3 2 lanes
++ * -pcie3: pcie@11290000 - Gen3 1 lane
++ * and 1 usb controller
++ * -ssusb1: usb@11200000 (u2 port and u3 port)
++ */
++
++&pcie0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie0_1_pins>;
++	wifi-reset-gpios = <&pio 7 GPIO_ACTIVE_HIGH>;
++	wifi-reset-msleep = <100>;
++	max-link-width = <0x02>;
++	status = "okay";
++
++	pcie@0,0 {
++		reg = <0x0000 0 0 0 0>;
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		mt7992@0,0 {
++			reg = <0x0000 0 0 0 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			nvmem-cells = <&eeprom_factory_0>;
++			nvmem-cell-names = "eeprom";
++
++			band@0 {
++				reg = <0>;
++				nvmem-cells = <&macaddr_factory_4 0>;
++				nvmem-cell-names = "mac-address";
++			};
++
++			/* FIXME: this does not work */
++			band@1 {
++				reg = <1>;
++				nvmem-cells = <&macaddr_factory_a 0>;
++				nvmem-cell-names = "mac-address";
++			};
++		};
++	};
++};
++
++&pio {
++	button_pins: button-pins {
++		pins = "GPIO_WPS", "GPIO_RESET";
++		mediatek,pull-down-adv = <0>;
++	};
++
++	pcie0_1_pins: pcie0-pins-g1 {
++		mux {
++			function = "pcie";
++			groups = "pcie_2l_0_pereset", "pcie_clk_req_n0_0";
++		};
++	};
++};
++
++&spi0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi0_flash_pins>;
++	status = "okay";
++
++	spi_nand: flash@0 {
++		compatible = "spi-nand";
++		reg = <0>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		spi-max-frequency = <52000000>;
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "bl2";
++				reg = <0x0 0x100000>;
++				read-only;
++			};
++
++			partition@100000 {
++				label = "u-boot-env";
++				reg = <0x100000 0x80000>;
++				read-only;
++			};
++
++			partition@180000 {
++				label = "factory";
++				reg = <0x180000 0x400000>;
++				read-only;
++
++				nvmem-layout {
++					compatible = "fixed-layout";
++					#address-cells = <1>;
++					#size-cells = <1>;
++
++					eeprom_factory_0: eeprom@0 {
++						reg = <0x0 0x1e00>;
++					};
++
++					macaddr_factory_4: eeprom@4 {
++						compatible = "mac-base";
++						reg = <0x4 0x6>;
++						#nvmem-cell-cells = <1>;
++					};
++
++					macaddr_factory_a: eeprom@a {
++						compatible = "mac-base";
++						reg = <0xa 0x6>;
++						#nvmem-cell-cells = <1>;
++					};
++
++					macaddr_factory_1e001c: eeprom@1e001c {
++						compatible = "mac-base";
++						reg = <0x1e001c 0x6>;
++						#nvmem-cell-cells = <1>;
++					};
++				};
++			};
++
++			partition@580000 {
++				label = "fip";
++				reg = <0x580000 0x200000>;
++				read-only;
++			};
++
++			partition@780000 {
++				compatible = "linux,ubi";
++				reg = <0x780000 0x7080000>;
++				label = "ubi";
++
++				volumes {
++					ubi_rootdisk: ubi-volume-fit {
++						volname = "fit";
++					};
++				};
++			};
++		};
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&watchdog {
++	status = "okay";
++};
++
++&cpu_thermal {
++	cooling-maps {
++		cpu-active-hot {
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++	};
++};
++
+diff --git a/target/linux/mediatek/filogic/base-files/etc/board.d/02_network b/target/linux/mediatek/filogic/base-files/etc/board.d/02_network
+index 82d60b2efa..386913c63e 100644
+--- a/target/linux/mediatek/filogic/base-files/etc/board.d/02_network
++++ b/target/linux/mediatek/filogic/base-files/etc/board.d/02_network
+@@ -274,6 +274,11 @@ mediatek_setup_interfaces()
+ 	tplink,re6000xd)
+ 		ucidef_set_interface_lan "lan1 lan2 eth1"
+ 		;;
++	tplink,tl-7dr7260mv1)
++		ucidef_set_interfaces_lan_wan "eth2" eth1
++		ucidef_add_switch "switch0" \
++					"0@eth2" "1:lan" "2:lan" "3:lan" "4:lan"
++		;;
+ 	xiaomi,mi-router-ax3000t|\
+ 	xiaomi,mi-router-ax3000t-ubootmod|\
+ 	xiaomi,mi-router-wr30u-stock|\
+diff --git a/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac b/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac
+index 15494399d7..1c8bad7327 100644
+--- a/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac
++++ b/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac
+@@ -166,6 +166,7 @@ case "$board" in
+ 	tplink,tl-xtr8488)
+ 		[ "$PHYNBR" = "1" ] && get_mac_label > /sys${DEVPATH}/macaddress
+ 		;;
++	tplink,tl-7dr7260mv1|\
+ 	tplink,tl-7dr7230-rev1.0-sp2)
+ 		[ "$PHYNBR" = "1" ] && mtd_get_mac_binary factory 0xa > /sys${DEVPATH}/macaddress
+ 		;;
+diff --git a/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh b/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
+index 716f89af24..e080f593d3 100755
+--- a/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
++++ b/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
+@@ -115,6 +115,7 @@ platform_do_upgrade() {
+ 	tplink,tl-xdr6088|\
+ 	tplink,tl-xtr8488|\
+ 	tplink,tl-7dr7230-rev1.0-sp2|\
++	tplink,tl-7dr7260mv1|\
+ 	xiaomi,mi-router-ax3000t-ubootmod|\
+ 	xiaomi,redmi-router-ax6000-ubootmod|\
+ 	xiaomi,mi-router-wr30u-ubootmod|\
+@@ -220,6 +221,7 @@ platform_check_image() {
+ 	bananapi,bpi-r4-poe|\
+ 	hiveton,h5000m|\
+ 	tplink,tl-7dr7230-rev1.0-sp2|\
++	tplink,tl-7dr7260mv1|\
+ 	cmcc,rax3000m)
+ 		magic="$(dd if="$1" bs=1 skip=257 count=5 2>/dev/null)"
+ 
+diff --git a/target/linux/mediatek/image/filogic.mk b/target/linux/mediatek/image/filogic.mk
+index 4f61d4cc11..9b47604d03 100644
+--- a/target/linux/mediatek/image/filogic.mk
++++ b/target/linux/mediatek/image/filogic.mk
+@@ -1652,6 +1652,27 @@ define Device/tplink_tl-7dr7230-rev1.0-sp2
+ endef
+ TARGET_DEVICES += tplink_tl-7dr7230-rev1.0-sp2
+ 
++define Device/tplink_tl-7dr7260mv1
++  DEVICE_VENDOR := TP-Link
++  DEVICE_MODEL := TL-7DR7260
++  DEVICE_VARIANT := mv1
++  DEVICE_DTS := mt7988d-tplink-tl-7dr7260mv1
++  DEVICE_DTS_DIR := ../dts
++  DEVICE_DTS_LOADADDR := 0x45f00000
++  DEVICE_PACKAGES := mt798x-2p5g-phy-firmware-internal kmod-mt7992-firmware mt7988-wo-firmware swconfig kmod-rtl837x_gsw
++  KERNEL_LOADADDR := 0x46000000
++  UBINIZE_OPTS := -E 5
++  BLOCKSIZE := 128k
++  PAGESIZE := 2048
++  IMAGE_SIZE := 65536k
++  KERNEL_IN_UBI := 1
++  UBOOTENV_IN_UBI := 1
++  IMAGES += factory.bin
++  IMAGE/sysupgrade.itb := append-ubi | check-size $$$$(IMAGE_SIZE)
++  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
++endef
++TARGET_DEVICES += tplink_tl-7dr7260mv1
++
+ define Device/ubnt_unifi-6-plus
+   DEVICE_VENDOR := Ubiquiti
+   DEVICE_MODEL := UniFi U6+

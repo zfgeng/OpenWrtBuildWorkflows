@@ -36,8 +36,8 @@ env:
   # You can modify the REPO_NAME to any name you want, but remember not to let it have the same name in 
   # other workflows.
   REPO_NAME: immortalwrt
-  REPO_URL: https://github.com/padavanonly/immortalwrt-mt798x-6.6.git
-  REPO_BRANCH: mt798x-mt799x-6.6-mtwifi
+  REPO_URL: https://github.com/RuijieNetworksCommunity/MT798X-6.6-24.10.git
+  REPO_BRANCH: mt798x-mt799x-mtwifi_be72pro_be68u
   BUILD_DEPENDS:  "ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
   bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
   g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev \
@@ -48,7 +48,7 @@ env:
   upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd"
   # CONFIG_FILE is the name of your own config files for compiling, you should upload these files into the root 
   # directory of your workflow repo.
-  CONFIG_FILE: mtwifi_7260mv1.config
+  CONFIG_FILE: mtwifi_7260mv1_ruijie.config
   # CUSTOM_SCRIPT_1 is the name of extra bash script you want to execute before feeds update&install.
   # CUSTOM_SCRIPT_2 is the name of extra bash script you want to execute after feeds update&install.
   # You can modify the initial settings of your firmware through these two scripts. If this is what you need,
@@ -148,16 +148,10 @@ jobs:
           cd openwrt/
           git apply $GITHUB_WORKSPACE/mtwifi_7260mv1_1.diff
 
-      - name: Add SSH Private key RTL837X_DRIVER
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: |
-            ${{ secrets.SSH_PRIVATE_KEY_RTL837X_DRIVER }}
-
       - name: Clone rtl837x-gsw-driver driver
         run: |
            cd openwrt/
-           git clone git@github.com:RuijieNetworksCommunity/rtl837x-gsw-driver.git package/rtl837x-gsw-driver
+           git clone https://github.com/RuijieNetworksCommunity/openwrt-rtl8372n-driver.git package/openwrt-rtl8372n-driver
       
       - name: Update feeds
         run: cd openwrt/ && ./scripts/feeds update -a

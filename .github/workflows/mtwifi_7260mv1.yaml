@@ -148,11 +148,16 @@ jobs:
           cd openwrt/
           git apply $GITHUB_WORKSPACE/mtwifi_7260mv1_1.diff
 
-      - name: clone rtl837x_driver
-        run: |
-          cd openwrt/
-          git clone https://github.com/RuijieNetworksCommunity/openwrt-rtl8372n-driver package/openwrt-rtl8372n-driver
+      - name: Add SSH Private key RTL837X_DRIVER
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY_RTL837X_DRIVER }}
 
+       - name: Clone rtl837x-gsw-driver driver
+         run: |
+           git clone git@github.com:RuijieNetworksCommunity/rtl837x-gsw-driver.git package/rtl837x-gsw-driver
+      
       - name: Update feeds
         run: cd openwrt/ && ./scripts/feeds update -a
 

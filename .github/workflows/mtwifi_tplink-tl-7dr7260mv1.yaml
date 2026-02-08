@@ -164,11 +164,11 @@ jobs:
           [ -e files ] && mv files/ openwrt/files/
           [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
  
-      - name: Run custom-script-2
+      - name: Run custom-script-3
         run: |
-          chmod +x $CUSTOM_SCRIPT_2
+          chmod +x $CUSTOM_SCRIPT_3
           cd openwrt/
-          $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_2
+          $GITHUB_WORKSPACE/$CUSTOM_SCRIPT_3
 
       - name: Modiy LAN address
         run: |
